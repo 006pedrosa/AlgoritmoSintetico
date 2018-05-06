@@ -8,6 +8,9 @@ package cliente;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 /**
  *
@@ -18,11 +21,16 @@ public class ClienteConexao implements Runnable {
     int id;
     String ip;
     int PORTA;
+    int tamanhoVetor;
+    int [] vetor;
+    Random gerador = new Random();
 
     public ClienteConexao(String ip, int PORTA, int id) {
         this.id = id;
         this.PORTA = PORTA;
         this.ip = ip;
+        this.tamanhoVetor = gerador.nextInt(100000);
+        vetor = new int[tamanhoVetor];
     }
 
     @Override
@@ -32,13 +40,18 @@ public class ClienteConexao implements Runnable {
             if (socket.isConnected()) {
                 System.out.println("CONEXAO COM O SERVIDOR ESTABELECIDA");
             }
-            while (socket.isConnected()) {
-                
+            new PrintStream(socket.getOutputStream()).println(tamanhoVetor);
+            
+            for(int i=0;i<tamanhoVetor;i++){
+                new PrintStream(socket.getOutputStream()).println(gerador.nextInt(1000000));
+            }
+            Scanner mensagem = new Scanner(socket.getInputStream());
+            for(int i=0;i<tamanhoVetor;i++){
+                vetor[i]= mensagem.nextInt();
             }
         } catch (IOException ex) {
             // do nothing
         }
     }
 }
-
 

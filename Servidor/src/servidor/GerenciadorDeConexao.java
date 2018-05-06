@@ -6,6 +6,7 @@
 package servidor;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -27,21 +28,26 @@ public class GerenciadorDeConexao implements Runnable {
     public void run() {
         String ipCliente = this.conexao.getInetAddress().getHostAddress();
         System.out.println("Nova conexão com o cliente " + ipCliente);
-        while (this.conexao.isConnected()) {
-            
-            Scanner mensagem;
 
-            try {
-                mensagem = new Scanner(this.conexao.getInputStream());
-                if(mensagem.hasNextLine()){
-                
-                }else{
-                    System.out.println("CLIENTE: " + ipCliente + " SE DESCONECTOU DA REDE");
-                    break;
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(GerenciadorDeConexao.class.getName()).log(Level.SEVERE, null, ex);
+        Scanner mensagem;
+
+        try {
+            mensagem = new Scanner(this.conexao.getInputStream());
+            int tamanhoVetor = mensagem.nextInt();
+            int[] vetor = new int[tamanhoVetor];
+
+            for (int i = 0; i < tamanhoVetor; i++) {
+                vetor[i] = mensagem.nextInt();
             }
+            QuickSort.quickSort(vetor, 0, tamanhoVetor);
+
+            for (int i = 0; i < tamanhoVetor; i++) {
+                new PrintStream(conexao.getOutputStream()).println(vetor[i]);
+            }
+
+            System.out.println("FIM DO ENVIO PARA O CLIENTE :" + ipCliente);
+        } catch (IOException ex) {
+            Logger.getLogger(GerenciadorDeConexao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
