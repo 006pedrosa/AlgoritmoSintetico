@@ -19,8 +19,18 @@ public class Cliente {
     public static int PORTA = 3535;
     public static ClienteConexao clienteConnection;
     public static long tempoResposta;
+    public static long[] tempoMedioResposta;
+
     public static Thread[] vetorThreads;
     public static FileWriter csv;
+
+    public static long CalculaMedia(long[] vetor, int tamanho) {
+        long total = 0;
+        for (int i = 0; i < tamanho; i++) {
+            total += vetor[i];
+        }
+        return total / tamanho;
+    }
 
     /**
      * @param args the command line arguments
@@ -37,11 +47,12 @@ public class Cliente {
         vetorThreads = new Thread[quantidadeThreads];
 
         for (int j = 1; j < quantidadeThreads; j++) {
+            tempoMedioResposta = new long[j];
             int threadsFinalizadas = 0;
             long inicio = System.currentTimeMillis();
 
             for (int i = 0; i < j; i++) {
-                clienteConnection = new ClienteConexao(ip, PORTA, i);
+                clienteConnection = new ClienteConexao(ip, PORTA, i, tempoMedioResposta[i]);
                 vetorThreads[i] = new Thread(clienteConnection);
             }
 
@@ -57,6 +68,8 @@ public class Cliente {
             csv.append(Integer.toString(j));
             csv.append(",");
             csv.append(Long.toString(tempoResposta));
+            csv.append(",");
+            csv.append(Long.toString(CalculaMedia(tempoMedioResposta, j)));
             csv.append("\n");
 
         }

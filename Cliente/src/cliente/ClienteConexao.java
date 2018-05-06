@@ -22,39 +22,42 @@ public class ClienteConexao implements Runnable {
     String ip;
     int PORTA;
     int tamanhoVetor;
-    int [] vetor;
+    int[] vetor;
     Random gerador = new Random();
-    int [] tempo;
+    int[] tempo;
     int threadsFinalizadas;
+    long tempoResposta;
 
-    public ClienteConexao(String ip, int PORTA, int id) {
+    public ClienteConexao(String ip, int PORTA, int id, long tempoResposta) {
         this.id = id;
         this.PORTA = PORTA;
         this.ip = ip;
         this.tamanhoVetor = gerador.nextInt(100000);
         vetor = new int[tamanhoVetor];
+        this.tempoResposta = tempoResposta;
     }
 
     @Override
     public void run() {
         try {
+            long inicio = System.currentTimeMillis();
             Socket socket = new Socket(this.ip, this.PORTA);
             if (socket.isConnected()) {
                 System.out.println("CONEXAO COM O SERVIDOR ESTABELECIDA");
                 System.out.println("TAMANHO DO VETOR: " + tamanhoVetor);
             }
             new PrintStream(socket.getOutputStream()).println(tamanhoVetor);
-            
-            for(int i=0;i<tamanhoVetor;i++){
+
+            for (int i = 0; i < tamanhoVetor; i++) {
                 new PrintStream(socket.getOutputStream()).println(gerador.nextInt(1000000));
             }
             Scanner mensagem = new Scanner(socket.getInputStream());
-            for(int i=0;i<tamanhoVetor;i++){
-                vetor[i]= mensagem.nextInt();
+            for (int i = 0; i < tamanhoVetor; i++) {
+                vetor[i] = mensagem.nextInt();
             }
+            this.tempoResposta = System.currentTimeMillis() - inicio;
         } catch (IOException ex) {
             // do nothing
         }
     }
 }
-
