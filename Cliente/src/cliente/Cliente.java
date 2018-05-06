@@ -19,40 +19,48 @@ public class Cliente {
     public static int PORTA = 3535;
     public static ClienteConexao clienteConnection;
     public static long tempoResposta;
-    public static FileWriter csv; 
- 
+    public static Thread[] vetorThreads;
+    public static FileWriter csv;
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("INSIRA O IP DO SERVIDOR PARA CONEXAO - PARA CONEXAO LOCAL DIGITE localhost ou 127.0.0.1");
         Scanner in = new Scanner(System.in);
         ip = in.nextLine();
         csv = new FileWriter("simulacao.csv");
-        
+
         System.out.println("DIGITE UMA QUANTIDADE MAXIMA DE CONEXOES PARA SIMULAR");
         int quantidadeThreads = in.nextInt();
-        
-        for (int j = 0; j < quantidadeThreads; j++) {       
-               int threadsFinalizadas = 0;
-               long inicio = System.currentTimeMillis();
-               
+
+        vetorThreads = new Thread[quantidadeThreads];
+
+        for (int j = 0; j < quantidadeThreads; j++) {
+            int threadsFinalizadas = 0;
+            long inicio = System.currentTimeMillis();
+
             for (int i = 0; i < j; i++) {
                 clienteConnection = new ClienteConexao(ip, PORTA, i, threadsFinalizadas);
-                new Thread(clienteConnection).start();
+                vetorThreads[j] = new Thread(clienteConnection);
             }
-            
-            while (threadsFinalizadas < quantidadeThreads){}
-            
+
+            for (int i = 0; i < j; i++) {
+                vetorThreads[j].start();
+            }
+
+            for (int i = 0; i < j; i++) {
+                vetorThreads[j].join();
+            }
+
             tempoResposta = System.currentTimeMillis() - inicio;
             csv.append(Integer.toString(j));
             csv.append(",");
             csv.append(Long.toString(tempoResposta));
             csv.append("\n");
-            
+
         }
-        
+
         csv.flush();
         csv.close();
 
