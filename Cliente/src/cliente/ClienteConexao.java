@@ -24,6 +24,7 @@ public class ClienteConexao implements Runnable {
     int tamanhoVetor;
     int [] vetor;
     Random gerador = new Random();
+    int [] tempo;
 
     public ClienteConexao(String ip, int PORTA, int id) {
         this.id = id;
@@ -39,6 +40,7 @@ public class ClienteConexao implements Runnable {
             Socket socket = new Socket(this.ip, this.PORTA);
             if (socket.isConnected()) {
                 System.out.println("CONEXAO COM O SERVIDOR ESTABELECIDA");
+                System.out.println("TAMANHO DO VETOR: " + tamanhoVetor);
             }
             new PrintStream(socket.getOutputStream()).println(tamanhoVetor);
             

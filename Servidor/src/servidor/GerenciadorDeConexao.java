@@ -39,7 +39,7 @@ public class GerenciadorDeConexao implements Runnable {
             for (int i = 0; i < tamanhoVetor; i++) {
                 vetor[i] = mensagem.nextInt();
             }
-            QuickSort.quickSort(vetor, 0, tamanhoVetor);
+            QuickSort.quickSort(vetor, 0, tamanhoVetor-1);
 
             for (int i = 0; i < tamanhoVetor; i++) {
                 new PrintStream(conexao.getOutputStream()).println(vetor[i]);
