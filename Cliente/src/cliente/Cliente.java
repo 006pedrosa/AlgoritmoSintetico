@@ -36,21 +36,21 @@ public class Cliente {
 
         vetorThreads = new Thread[quantidadeThreads];
 
-        for (int j = 0; j < quantidadeThreads; j++) {
+        for (int j = 1; j < quantidadeThreads; j++) {
             int threadsFinalizadas = 0;
             long inicio = System.currentTimeMillis();
 
             for (int i = 0; i < j; i++) {
-                clienteConnection = new ClienteConexao(ip, PORTA, i, threadsFinalizadas);
-                vetorThreads[j] = new Thread(clienteConnection);
+                clienteConnection = new ClienteConexao(ip, PORTA, i);
+                vetorThreads[i] = new Thread(clienteConnection);
             }
 
             for (int i = 0; i < j; i++) {
-                vetorThreads[j].start();
+                vetorThreads[i].start();
             }
 
             for (int i = 0; i < j; i++) {
-                vetorThreads[j].join();
+                vetorThreads[i].join();
             }
 
             tempoResposta = System.currentTimeMillis() - inicio;
