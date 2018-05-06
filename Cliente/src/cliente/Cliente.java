@@ -52,7 +52,7 @@ public class Cliente {
             long inicio = System.currentTimeMillis();
 
             for (int i = 0; i < j; i++) {
-                clienteConnection = new ClienteConexao(ip, PORTA, i, tempoMedioResposta[i]);
+                clienteConnection = new ClienteConexao(ip, PORTA, i, tempoMedioResposta);
                 vetorThreads[i] = new Thread(clienteConnection);
             }
 
