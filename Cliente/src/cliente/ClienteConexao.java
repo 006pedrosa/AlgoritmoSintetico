@@ -25,13 +25,15 @@ public class ClienteConexao implements Runnable {
     int [] vetor;
     Random gerador = new Random();
     int [] tempo;
+    int threadsFinalizadas;
 
-    public ClienteConexao(String ip, int PORTA, int id) {
+    public ClienteConexao(String ip, int PORTA, int id, int finalizadas) {
         this.id = id;
         this.PORTA = PORTA;
         this.ip = ip;
         this.tamanhoVetor = gerador.nextInt(100000);
         vetor = new int[tamanhoVetor];
+        this.threadsFinalizadas = finalizadas;
     }
 
     @Override
@@ -51,6 +53,7 @@ public class ClienteConexao implements Runnable {
             for(int i=0;i<tamanhoVetor;i++){
                 vetor[i]= mensagem.nextInt();
             }
+            this.threadsFinalizadas+=1;
         } catch (IOException ex) {
             // do nothing
         }
